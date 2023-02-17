@@ -1,0 +1,20 @@
+# CSE-333
+
+Creates the following in C:
+
+Each node in a doubly-linked list has three fields: a payload, a pointer to the previous element in the list (or NULL if there is no previous element), and a pointer to the next element in the list. If the list is empty, there are no nodes. If the list has a single element, both of its next and previous pointers are NULL.
+
+Doubly LinkedList: The structure containing our linked list's metadata, such as head and tail pointers. When our customer asks us to allocate a new, empty linked list, we malloc and initialize an instance of this structure then return a pointer to that malloc'ed structure to the customer.
+LinkedListNode: this structure represents a node in a doubly-linked list. It contains a field for stashing away (a pointer to) the customer-supplied payload and fields pointing to the previous and next LinkedListNode in the list. When a customer requests that we add an element to the linked list, we malloc a new LinkedListNode to store the pointer to that element, do surgery to splice the LinkedListNode into the data structure, and update our LinkedList's metadata.
+LLIterator: sometimes customers want to navigate through a linked list; to help them do that, we provide them with an iterator. LLIterator contains bookkeeping associated with an iterator. In particular, it tracks the list that the iterator is associated with and the node in the list that the iterator currently points to. Note that there is a consistency problem here: if a customer updates a linked list by removing a node, it's possible that some existing iterator 
+becomes inconsistent because it referenced the deleted node. So, we make our customers promise that they will free any live iterators before mutating the linked list. (Since we are generous, we do allow a customer to keep an iterator if the mutation was done using that iterator.) When a customer asks for a new iterator, we malloc an instance and return a pointer to it to the customer.
+
+
+
+A chained hash table is a data structure that consists of an array of buckets, with each bucket containing a linked list of elements. When a user inserts a key/value pair into the hash table, the hash table uses a hash function to map the key into one of the buckets, and then adds the key/value pair onto the linked list. There is an important corner case: if the key of the inserted key/value pair already exists in the hash table; our implementation of a hash table 
+replaces the existing key/value pair with the new one and returns the old key/value pair to the customer.Over time, as more and more elements are added to the hash table, the linked lists hanging off of each bucket will start to grow. As long as the number of elements in the hash table is a small multiple of the number of buckets, lookup time is fast: you hash the key to find the bucket, then iterate through the (short) chain (linked list) hanging off the bucket 
+until you find the key. As the number of elements gets larger, lookups become less efficient, so our hash table includes logic to resize itself by increasing the number of buckets to maintain short chains.
+
+HashTable: The structure containing our hash table's metadata, such as the number of elements and the bucket array. When our customer asks us to allocate a new, empty hash table, we malloc and initialize an instance of this (including malloc'ing space for the bucket array that it uses and allocating LinkedLists for each bucket), and return a pointer to that malloc'ed structure to the customer.
+HTIterator (not shown in the diagram): sometimes customers want to iterate through all elements in a hash table; to help them do that, we provide them with an iterator. HTIterator points to a structure that contains bookkeeping associated with an iterator. Similar to a linked list iterator, the hash table iterator keeps track of the hash table the iterator is associated with and in addition has 
+a linked list iterator for iterating through the bucket linked lists. When a customer asks for a new iterator we malloc an HTIterator and return a pointer to it.
